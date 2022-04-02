@@ -5,7 +5,7 @@ Copyright (c) 2022, Matthew Scott McNabb - ALL RIGHTS RESERVED
 Gaku Gym LICENSE (Version 1.0, Last Updated: April 2nd, 2022)
 
 Permission is granted to copy, compile, and execute the software for personal, 
-non-commercial use. The distribution, modifcation, or creation of derivative 
+non-commercial use. The distribution, modification, or creation of derivative 
 works of this software, accompanying assets, and materials is PROHIBITED. 
 
 The above copyright notice and full text of this license shall be included in 
