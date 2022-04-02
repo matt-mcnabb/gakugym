@@ -1,0 +1,125 @@
+﻿@page "/fact-database/category/{RouteParamCategoryId:guid}"
+@inherits BaseComponent
+
+@if(category != null)
+{
+	<div id="pageHeader">
+	    <span id="pageHeaderLeft">Category - @category.name</span>
+		<span id="pageHeaderRight">
+			<button class="SecondaryButton" @onclick="OnEditClick"><svg class="icon"><use xlink:href="#edit"/></svg></button><!--
+		 --><button class="SecondaryButton" @onclick="OnBackClick"><svg class="icon"><use xlink:href="#back"/></svg></button>
+		</span>
+	</div>
+	<div id="pageBody">
+
+		<div>@category.description</div>
+
+		<div class="listHeader">
+			<span>Challenges</span>
+			<button class="SecondaryButton" @onclick="OnAddChallengeClick"><svg class="icon"><use xlink:href="#add"/></svg></button>		
+		</div>
+		@if(challenges != null && challenges.Count > 0)
+		{
+			@foreach(var challenge in challenges)
+			{
+				<div>
+					@challenge.name
+					<button class="SecondaryButton" @onclick="() => OnEditChallenge(challenge)"><svg class="icon"><use xlink:href="#edit"/></svg></button>
+				</div>
+			}
+		}
+		else
+		{
+			<div class="emptyListMessage">There currently no challenges defined.</div>
+		}
+		<div class="listHeader">
+			<span>Facts</span>
+			<button class="SecondaryButton" @onclick="OnAddFactClick"><svg class="icon"><use xlink:href="#add"/></svg></button>		
+		</div>
+		<div class="searchWrapper">
+			<input type="text" placeholder="Enter a search query">
+			<button @onclick="OnSearchClick"><svg class="icon"><use xlink:href="#search"/></svg></button>                    
+		</div>
+		@if(facts != null)
+		{
+			<table>
+				<thead>
+					<tr>
+						<th></th>
+						@foreach(var field in category.fields)
+						{
+							<th>@field.name</th>
+						}
+					</tr>
+				</thead>
+				<tbody>
+					@foreach(var fact in facts)
+					{
+						<tr>
+							<td><button class="SecondaryButton" @onclick="() => OnEditFact(fact.guid)"><svg class="icon"><use xlink:href="#edit"/></svg></button></td>
+							@foreach(var field in category.fields)
+							{
+								<td>
+									<pre>@fact.fieldData[field.guid]</pre>
+								</td>					
+							}
+						</tr>
+					}
+				</tbody>
+			</table>
+		}
+	</div>
+}
+
+@code 
+{
+	[Parameter]
+	public Guid RouteParamCategoryId { get; set; }
+
+	Category?        category;
+	List<Challenge>? challenges;
+	List<Fact>?      facts;
+
+	protected override async Task OnParametersSetAsync()
+	{
+		category = await API.GetCategory(RouteParamCategoryId);
+		challenges = await API.GetChallengesByCategory(RouteParamCategoryId);
+	}
+
+	void OnEditFact(Guid factId)
+	{
+		NavigationManager.NavigateTo($"/fact-database/fact/{factId}/edit");
+	}
+
+	void OnBackClick()
+	{
+		NavigationManager.NavigateTo($"/fact-database/domain/{category.domainId}");
+	}
+
+	void OnEditClick()
+	{
+		NavigationManager.NavigateTo($"/fact-database/category/{RouteParamCategoryId}/edit");		
+	}
+
+	void OnEditChallenge(Challenge challenge)
+	{
+		NavigationManager.NavigateTo($"/fact-database/challenge/{challenge.id}/edit");		
+	}
+
+	void OnAddChallengeClick()
+	{
+		NavigationManager.NavigateTo($"/fact-database/category/{RouteParamCategoryId}/add-challenge");
+	}
+
+	void OnAddFactClick()
+	{
+		NavigationManager.NavigateTo($"/fact-database/category/{RouteParamCategoryId}/add-fact");
+	}
+
+	async Task OnSearchClick()
+	{
+		var results = await API.SearchFacts(new SearchQuery { categoryId = category.guid });
+
+		facts = results.facts;
+	}
+}

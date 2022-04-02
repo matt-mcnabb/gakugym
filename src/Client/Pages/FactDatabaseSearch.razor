@@ -1,0 +1,42 @@
+﻿@page "/fact-database/search"
+@inherits BaseComponent
+
+<div id="pageHeader">
+    <span id="pageHeaderLeft">Fact Database - Search</span>
+    <span id="pageHeaderRight"><button class="SecondaryButton" @onclick="OnBackClick"><svg class="icon"><use xlink:href="#back"/></svg></button></span>
+</div>
+<div id="pageBody">
+    <div id="factSearchBar">
+        <input type="text" placeholder="Enter a search query">
+        <button @onclick="OnSearchClick"><svg class="icon"><use xlink:href="#search"/></svg></button>                    
+    </div>
+</div>
+
+@code 
+{
+    string         searchInputText = "";
+    SearchResults? searchResults;
+
+    SearchQuery ParseQuery(string text)
+    {
+        return new SearchQuery
+        {
+            
+        };
+    }
+
+    void OnBackClick()
+    {
+        NavigationManager.NavigateTo("/fact-database");   
+    }
+
+    async Task Search()
+    {
+        var results = await API.SearchFacts(ParseQuery(searchInputText));
+    }
+
+    async Task OnSearchClick()
+    {
+        
+    }
+}

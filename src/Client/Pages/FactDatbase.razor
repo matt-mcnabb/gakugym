@@ -1,0 +1,63 @@
+﻿@page "/fact-database"
+@inherits BaseComponent
+<div id="pageHeader">
+    <span id="pageHeaderLeft">Fact Database</span>
+    <span id="pageHeaderRight"><button class="SecondaryButton" @onclick="OnBackClick"><svg class="icon"><use xlink:href="#back"/></svg></button></span>
+</div>
+<div id="pageBody">
+    <div class="searchWrapper">
+        <input type="text" placeholder="Enter a search query">
+        <button @onclick="OnSearchClick"><svg class="icon"><use xlink:href="#search"/></svg></button>                    
+    </div>
+    <div>
+        <div class="listHeader">
+            <span>Domains</span>
+            <button class="SecondaryButton" @onclick="OnDomainAddClick"><svg class="icon"><use xlink:href="#add"/></svg></button>                                            
+        </div>
+        @if(domains != null)
+        {
+            @foreach(var domain in domains)
+            {
+                <div class="card domainCard" @onclick="() => OnDomainClick(domain)">
+                    <div class="DomainHeader">
+                        <span class="DomainName">@domain.name</span>
+                        <svg class="icon"><use xlink:href="#moreHorizontal"/></svg>                                                
+                    </div>
+                    <span class="DomainDescription">@domain.description</span>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@code 
+{
+    List<Domain>? domains;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        domains = await API.GetDomains();
+
+        await base.OnParametersSetAsync();
+    }
+
+    void OnBackClick()
+    {
+        NavigationManager.NavigateTo($"/");
+    }
+
+    void OnSearchClick()
+    {
+        
+    }
+
+    void OnDomainClick(Domain domain)
+    {
+        NavigationManager.NavigateTo($"/fact-database/domain/{domain.guid}");    
+    }
+
+    void OnDomainAddClick()
+    {
+        NavigationManager.NavigateTo("/fact-database/new-domain");
+    }
+}

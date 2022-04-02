@@ -1,0 +1,47 @@
+﻿@page "/studies"
+@inherits BaseComponent
+
+<div id="pageHeader">
+    <span id="pageHeaderLeft">Studies</span>
+    <span id="pageHeaderRight"><button class="SecondaryButton" @onclick="OnBackClick"><svg class="icon"><use xlink:href="#back"/></svg></button></span>
+</div>
+<div id="pageBody">
+	<div class="listHeader">
+		<span>Studies</span>
+		<button class="SecondaryButton" @onclick="OnAddStudyClick"><svg class="icon"><use xlink:href="#add"/></svg></button>		
+	</div>
+    @if(studies != null)
+    {
+        @foreach(var study in studies)
+        {
+            <div class="card">
+                <div>@study.name</div>
+                <button @onclick="() => OnBeginStudyClick(study)">Begin Study</button>
+            </div>
+        }
+    }
+</div>
+@code 
+{
+    List<Study>? studies;
+
+    void OnBackClick()
+    {
+        NavigationManager.NavigateTo("/");    
+    }
+
+    void OnBeginStudyClick(Study study)
+    {
+        NavigationManager.NavigateTo($"/study-session/{study.id}");
+    }
+
+    void OnAddStudyClick()
+    {
+        NavigationManager.NavigateTo("/studies/add-study");
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        studies = await API.GetStudies();
+    }
+}

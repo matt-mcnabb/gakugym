@@ -1,0 +1,115 @@
+﻿@page "/studies/add-study"
+@inherits BaseComponent
+
+<div id="pageHeader">
+	<span id="pageHeaderLeft">New Study</span>
+	<span id="pageHeaderRight">
+		<button class="SecondaryButton" @onclick="OnCloseClick"><svg class="icon"><use xlink:href="#close"/></svg></button>
+	</span>
+</div>
+<div id="pageBody">
+
+    <div class="inputWrapper">
+        <label>Name</label>
+        <input type="text" @bind-value="studyNameText">
+    </div>
+	<div class="listHeader">
+		<span>Fact Groups</span>
+		<button class="SecondaryButton" @onclick="OnAddFactGroupClick"><svg class="icon"><use xlink:href="#add"/></svg></button>
+	</div>
+    @foreach(var factGroup in factGroups)
+    {
+        <div>
+            <div class="inputWrapper">
+                <label>Domain</label>
+                <select value="@factGroup.domain?.guid" @onchange="e => OnFactGroupDomainChange(factGroup, (string?)e.Value)">
+                    <option></option>
+                    @foreach(var domain in domains)
+                    {
+                        <option value="@domain.guid">@domain.name</option>
+                    }
+                </select>
+            </div>
+            <div class="inputWrapper">
+                <label>Category</label>
+                <select value="@factGroup.category?.guid" @onchange="e => OnFactGroupCategoryChange(factGroup, (string?)e.Value)">
+                    <option></option>
+                    @foreach(var category in categories.Where(x => factGroup.domain != null && x.domainId == factGroup.domain.guid))
+                    {
+                        <option value="@category.guid">@category.name</option>
+                    }
+                </select>
+            </div>
+        </div>
+    }
+    <button @onclick="OnAddStudyButtonClick">Add Study</button>
+</div>
+
+@code 
+{
+    class FactGroup
+    {
+        public Domain?   domain;
+        public Category? category;
+        public int       newChallengesPerInterval;
+        public int       newIntervalMinutes;
+        public string?   schedulingAlgorithm;
+    }
+
+    string? studyNameText;
+    List<Category>  categories = new List<Category>();
+    List<Domain>    domains    = new List<Domain>();
+    List<FactGroup> factGroups = new List<FactGroup>();
+
+    void OnCloseClick()
+    {
+        NavigationManager.NavigateTo("/studies");
+    }
+
+    void OnAddFactGroupClick()
+    {
+        factGroups.Add(new FactGroup { });    
+    }
+
+    async Task OnAddStudyButtonClick()
+    {
+        await API.SaveStudy(new Study
+        {
+            name = studyNameText,
+            factGroups = factGroups.Select(x => new StudyFactGroup
+            {                
+                categoryId = x.category.guid                
+            }).ToList()
+        });
+
+        NavigationManager.NavigateTo("/studies");
+    }
+
+    void OnFactGroupDomainChange(FactGroup factGroup, string? domainId)
+    {
+        if(domainId == null)
+        { 
+            factGroup.domain = null;
+            return;
+        }
+
+        factGroup.domain = domains.First(x => x.guid == Guid.Parse(domainId));
+    }
+
+    void OnFactGroupCategoryChange(FactGroup factGroup, string? categoryId)
+    {
+        if(categoryId == null)
+        {
+            factGroup.category = null;
+            return;
+        }
+
+        factGroup.category = categories.First(x => x.guid == Guid.Parse(categoryId));
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        domains    = await API.GetDomains();
+        categories = await API.GetAllCategories();
+    }
+}

@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <title>StudyGym</title>
+        <base href="/" />
+        <link href="css/main.css" rel="stylesheet" />
+    </head>
+    <body>
+        <!--<app>Loading...</app>
+        <div id="blazor-error-ui">
+            An unhandled error has occurred.
+            <a href="" class="reload">Reload</a>
+            <a class="dismiss">🗙</a>
+        </div>-->
+        <script>
+            function RefreshCSS()
+            {
+                //var links = document.getElementsByTagName('link')[0];
+
+                //for (var link of links)
+                //{
+                //    //if (link.href.startsWith('css/main.css'))
+                //        link.parentNode.removeChild(link);
+                //}
+
+                //var css = document.createElement('link');
+
+                //css.type = 'text/css';
+                //css.rel = 'stylesheet';
+
+                //document.getElementsByTagName('head')[0].appendChild(css);
+
+                document.getElementsByTagName('link')[0].href = 'css/main.css?' + crypto.randomUUID();
+            }
+
+            RefreshCSS();
+
+            setInterval(RefreshCSS, 2000);
+
+        </script>
+        <script src="_framework/blazor.webassembly.js"></script>
+    </body>
+</html>

@@ -1,0 +1,63 @@
+﻿@page "/fact-database/domain/{RouteParamDomainId:guid}/edit"
+@inherits BaseComponent
+@using System.ComponentModel.DataAnnotations
+
+@if(domain != null)
+{
+	<div id="pageHeader">
+		<span id="pageHeaderLeft">Edit Domain - @domain.name</span>
+		<span id="pageHeaderRight"><button class="SecondaryButton" @onclick="OnCloseClick"><svg class="icon"><use xlink:href="#close"/></svg></button></span>
+	</div>
+	<div id="pageBody">
+		<EditForm Model="this" OnValidSubmit="OnSaveClick">
+			<DataAnnotationsValidator/>
+			<div class="inputWrapper">
+				<label>Name</label>
+				<InputText @bind-Value="this.nameText" placeholder="Name of the domain"/>
+				<ValidationMessage For="() => this.nameText" />
+			</div>
+			<div class="inputWrapper">
+				<label>Description</label>
+				<InputText @bind-Value="this.descriptionText" placeholder="A description (optional)"/>
+			</div>
+			<button type="submit">Save</button>
+		</EditForm>
+	</div>
+}
+
+@code 
+{
+	[Parameter]
+	public Guid RouteParamDomainId { get; set; }
+
+	Domain? domain;
+
+	[Required]
+	public string? nameText { get; set; }
+	public string? descriptionText;
+
+	protected override async Task OnParametersSetAsync()
+	{
+		domain = await API.GetDomain(RouteParamDomainId);
+
+		nameText        = domain.name;
+		descriptionText = domain.description;
+	}
+
+	void OnCloseClick()
+	{
+		NavigationManager.NavigateTo($"/fact-database/domain/{RouteParamDomainId}");
+	}
+
+	async Task OnSaveClick()
+	{
+		await API.UpdateDomain(new Domain
+		{
+			guid = domain.guid,
+			name = nameText,
+			description = descriptionText
+		});
+
+		NavigationManager.NavigateTo($"/fact-database/domain/{RouteParamDomainId}");
+	}
+}

@@ -1,0 +1,23 @@
+#studySessionBody
+{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#templateOutput
+{
+    text-align: center;
+    flex-grow: 1;
+}
+
+#challengeControls
+{
+    text-align: center;
+    padding:10px;
+}
+
+#doneMessage
+{
+    text-align: center;
+}

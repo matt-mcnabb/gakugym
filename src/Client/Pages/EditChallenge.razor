@@ -1,0 +1,65 @@
+﻿@page "/fact-database/challenge/{RouteParamChallengeId:guid}/edit"
+@inherits BaseComponent
+
+@if(challenge != null)
+{
+    <div id="pageHeader">
+	    <span id="pageHeaderLeft">Edit Challenge - @challenge.name</span>
+	    <span id="pageHeaderRight"><button class="SecondaryButton" @onclick="OnCloseClick"><svg class="icon"><use xlink:href="#close"/></svg></button></span>
+    </div>
+    <div id="pageBody">
+        <div class="inputWrapper">
+        <label>Name</label>
+        <input type="text" @bind-value="nameText"></input>
+        </div>
+        <div class="inputWrapper">
+        <label>Front Template</label>
+        <textarea @bind="frontTemplateText"></textarea>
+        </div>
+        <div class="inputWrapper">
+        <label>Back Template</label>
+        <textarea @bind="backTemplateText"></textarea>
+        </div>
+        <button @onclick="OnSaveClick">Save</button>
+    </div>
+}
+
+@code 
+{
+    [Parameter]
+    public Guid RouteParamChallengeId { get; set; }
+
+    Challenge? challenge;
+
+    string? nameText;
+    string? frontTemplateText;
+    string? backTemplateText;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        challenge = await API.GetChallenge(RouteParamChallengeId);
+
+        nameText          = challenge.name;
+        frontTemplateText = challenge.frontTemplate;
+        backTemplateText  = challenge.backTemplate;
+    }    
+
+    void OnCloseClick()
+    {
+        NavigationManager.NavigateTo($"/fact-database/category/{challenge.categoryId}");
+    }
+
+    async Task OnSaveClick()
+    {
+        await API.SaveChallenge(new Challenge
+        {
+            id            = challenge.id,
+            name          = nameText,
+            frontTemplate = frontTemplateText,
+            backTemplate  = backTemplateText,
+            categoryId    = challenge.categoryId
+        });
+
+        NavigationManager.NavigateTo($"/fact-database/category/{challenge.categoryId}");
+    }
+}

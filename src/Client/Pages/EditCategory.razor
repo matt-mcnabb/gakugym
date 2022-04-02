@@ -1,0 +1,121 @@
+﻿@page "/fact-database/category/{RouteCategoryId:guid}/edit"
+@inherits BaseComponent
+
+@if(category != null)
+{
+	<div id="pageHeader">
+		<span id="pageHeaderLeft">Edit Category - @category.name</span>
+		<span id="pageHeaderRight"><button class="SecondaryButton" @onclick="OnCloseClick"><svg class="icon"><use xlink:href="#close"/></svg></button></span>
+	</div>
+	<div id="pageBody">
+
+		<div class="inputWrapper">
+			<label>Name</label>
+			<input type="text" @bind-value="categoryNameText" />
+		</div>
+		<div class="inputWrapper">
+			<label>Description</label>
+			<input type="text" @bind-value="categoryDescriptionText">
+		</div>
+		<div class="listHeader">
+			<span>Fields</span>
+			<button class="SecondaryButton" @onclick="OnAddFieldClick"><svg class="icon"><use xlink:href="#add"/></svg></button>
+		</div>
+
+		@foreach(var field in fields)
+		{
+			<div>
+				<div class="inputWrapper">
+					<label>Name</label> 
+					<input type="text" @bind-value="field.name">
+				</div>
+				<div class="inputWrapper">
+					<input type="text" @bind-value="field.description">
+					<label>Description</label> 
+				</div>
+				<div class="inputWrapper">
+					<select @bind="field.interpretation">
+						<option value="Text">Text</option>
+						<option value="HTML">HTML</option>
+						<option value="Image">Image</option>
+						<option value="Audio">Audio</option>
+						<option value="Numeric">Numeric</option>
+					</select>
+					<label>Interpretation</label> 
+				</div>
+				<button @onclick="() => OnRemoveFieldClick(field)">Remove</button>
+			</div>	
+		}
+		<button @onclick="OnSaveButtonClick">Save</button>
+	</div>
+}
+@code 
+{
+	[Parameter]
+	public Guid RouteCategoryId { get; set; }
+
+	Category? category;
+
+	string? categoryNameText;
+	string? categoryDescriptionText;
+
+	class CategoryField
+	{
+		public Guid guid;
+		public string? name;
+		public string? description;
+		public string? interpretation;
+	}
+
+	List<CategoryField> fields = new();
+
+	protected override async Task OnParametersSetAsync()
+	{
+		category = await API.GetCategory(RouteCategoryId);
+
+		categoryNameText = category.name;
+		categoryDescriptionText = category.description;
+
+		fields = category.fields.Select(x => new CategoryField
+		{
+			guid           = x.guid,
+			name           = x.name,
+			description    = x.description,
+			interpretation = x.type.ToString(),
+		}).ToList();
+	}
+
+	void OnCloseClick()
+	{
+		NavigationManager.NavigateTo($"/fact-database/category/{RouteCategoryId}");		
+	}
+
+	void OnAddFieldClick()
+	{
+		fields.Add(new());
+	}
+
+	void OnRemoveFieldClick(CategoryField categoryField)
+	{
+		fields.Remove(categoryField);
+	}
+
+	async Task OnSaveButtonClick()
+	{
+		await API.UpdateCategory(new Category
+		{
+			guid        = category.guid,
+			name        = categoryNameText,
+			description = categoryDescriptionText,
+			fields      = fields.Select(x => new Field
+			              {
+				               guid        = x.guid,
+				               description = x.description,
+				               name        = x.name,
+				               type        = Enum.Parse<FieldType>(x.interpretation)
+			              }).ToList()
+		});
+
+		NavigationManager.NavigateTo($"/fact-database/category/{RouteCategoryId}");
+	}
+}

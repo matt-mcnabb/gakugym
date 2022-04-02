@@ -1,0 +1,197 @@
+﻿@page "/study-session/{RouteStudyId:guid}"
+@inherits BaseComponent
+
+<div id="studySessionBody">
+    @if(!done)
+    {
+    <div id="templateOutput">
+        @((MarkupString)templateOutput)
+    </div>
+    <div id="challengeControls">
+        @if(flipped)
+        {
+            <button @onclick="OnFailButtonClick">Fail</button>
+            <button @onclick="OnPassButtonClick">Pass</button>
+        }
+        else
+        {
+            <button @onclick="OnShowButtonClick">Show</button>
+        }
+    </div>
+    }
+    else
+    {
+        <div id="doneMessage">Done.</div>
+    }
+</div>
+
+@code 
+{
+    [Parameter]
+    public Guid RouteStudyId { get; set; }
+
+    FactChallengeData?       currentChallengeData;
+    Study?                   study;
+    Challenge?               currentChallenge;
+    Fact?                    currentFact;
+    Category?                currentCategory;
+    string                   templateOutput = "";
+    bool                     flipped;
+    bool                     done = false;
+    List<FactChallengeData>? challenges;
+
+    async Task<List<FactChallengeData>> GetNewChallenges()
+    {
+        var newChallenges = new List<FactChallengeData>();
+
+        foreach(var factGroup in study.factGroups)
+            newChallenges.AddRange(await API.GetStudySessionNewChallenges(factGroup.categoryId, study.lastNewChallengeDateTime));
+
+        return newChallenges;
+    }
+
+    async Task<List<FactChallengeData>> GetReviews()
+    {
+        var reviews = new List<FactChallengeData>();
+
+        foreach(var factGroup in study.factGroups)
+            reviews.AddRange(await API.GetStudySessionReviewChallenges(factGroup.categoryId));
+
+        return reviews;
+    }
+
+    FactChallengeData? DrawChallenge()
+    {
+        var next = challenges!.OrderBy(x => x.status switch
+        {
+            null        => 1,
+            "learning"  => 2,
+            "reviewing" => 3,
+            "relapse"   => 4
+        }).FirstOrDefault(x => x.status != "reviewing");
+
+        if(next != null)
+            challenges!.Remove(next);
+
+        return next;
+    }
+
+    string RenderTemplate(string template, Dictionary<string,string> values)
+    {
+        var output = template;
+
+        foreach (var kv in values)
+            output = output.Replace(kv.Key, kv.Value);
+
+        return output;
+    }
+
+    void SetTemplate(string template)
+    {
+        templateOutput = RenderTemplate(template, currentFact.fieldData.ToDictionary(x => currentCategory.fields.First(y => y.guid == x.Key).name, x => x.Value));        
+    }
+
+    async Task ShowChallenge(FactChallengeData? challengeItem)
+    {
+        if(challengeItem == null)
+        {
+            done = true;
+            return;
+        }
+
+        currentChallengeData = challengeItem;
+        currentFact          = await API.GetFact(challengeItem.factId);
+        currentCategory      = await API.GetCategory(currentFact.categoryId);
+        currentChallenge     = await API.GetChallenge(challengeItem.challengeId);
+        flipped              = false;
+
+        SetTemplate(currentChallenge.frontTemplate);
+    }
+
+    void OnShowButtonClick()
+    {
+        SetTemplate(currentChallenge.backTemplate);
+
+        flipped = true;
+    }
+
+    async Task OnPassButtonClick()
+    {
+        await RecordResult(true);
+    }
+
+    async Task OnFailButtonClick()
+    {
+        await RecordResult(false);
+    }
+
+    async Task RecordResult(bool passed)
+    {
+        currentChallengeData.lastChallenged = DateTimeOffset.Now;
+
+        switch(currentChallengeData.status)
+        {
+            case null:
+                if(passed)
+                {
+                    currentChallengeData.status = "reviewing";                    
+                }
+                else
+                {
+                    currentChallengeData.status = "learning";
+                }
+                break;
+            case "learning":
+                if(passed)
+                {
+                    currentChallengeData.status = "reviewing";                    
+                }
+                else
+                {
+                    currentChallengeData.status = "learning";
+                }                
+                break;
+            case "reviewing":
+                if(passed)
+                {
+                    currentChallengeData.status = "reviewing";                    
+                }
+                else
+                {
+                    currentChallengeData.status = "relapse";
+                }                
+                break;
+            case "relapse":
+                if(passed)
+                {
+                    currentChallengeData.status = "reviewing";                    
+                }
+                else
+                {
+                    currentChallengeData.status = "learning";
+                }                
+                break;
+        }
+
+        currentChallengeData = await API.SaveFactChallengeData(currentChallengeData);
+
+        challenges.Add(currentChallengeData);
+
+        await ShowChallenge(DrawChallenge());
+    }
+
+    async Task FetchChallenges()
+    {
+        challenges = (await GetNewChallenges()).Union(await GetReviews()).ToList();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        study = await API.GetStudy(RouteStudyId); 
+        
+        await FetchChallenges();
+
+        await ShowChallenge(DrawChallenge());
+    }
+
+}

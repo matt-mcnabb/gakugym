@@ -1,0 +1,172 @@
+﻿body {
+    height: 100vh;
+    display: grid;
+    background-color: $theme-color-content-bg;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto 1fr;
+}
+
+#titleBar {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+    background-color: $theme-color-app-chrome-fill;
+    border-bottom: $theme-app-chrome-border;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;    
+}
+
+#titleBarLeft {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+    background-color: $theme-color-app-chrome-fill;
+    border-bottom: $theme-app-chrome-border;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+}
+
+#pageHeader
+{
+    display: flex;
+    justify-content: space-between;
+    background-color: darken($theme-color-content-bg, 3%);
+    align-items: center;
+    border-bottom: solid 1px darken($theme-color-content-bg, 15%);
+}
+
+#pageHeaderLeft
+{
+    padding : 5px;
+}
+
+#pageBody
+{
+    padding:10px;
+}
+
+#content 
+{
+    &.menuExpanded
+    {
+        grid-column: 2 / 3;
+        grid-row: 2 / 3;    
+    }
+
+    &.menuCollapsed
+    {
+        grid-column: 1 / 3;
+        grid-row: 2 / 3;
+    }
+}
+
+
+#sideNavPanel {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+
+    &.menuExpanded
+    {
+        grid-column: 1 / 2;
+        grid-row: 2 / 3;
+    }
+
+    &.menuCollapsed
+    {
+        display: none;
+        position: fixed;
+        height: 100vh;
+    }
+}
+
+Nav.SideNav {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border-right : $theme-app-chrome-border;;
+
+    a {
+        display: flex;
+        align-items: center;
+        justify-content: left;
+        @include theme-app-chrome-text-primary-font();
+        cursor: pointer;
+        padding: 3px;
+
+        &:hover
+        {
+            background-color: lighten(lightblue, 15%);
+        }
+    }
+}
+
+.SideNav a.active {
+    background-color: lightblue;
+}
+
+#sideNavTreeNav {
+    display: flex;
+    flex-direction: column;
+    background-color: #f8f8f8;
+}
+
+.treeChildren {
+    margin-left: 48px;
+    display: flex;
+    flex-direction: column;
+}
+
+.treeNodeContent {
+    display: flex;
+    align-items: center;
+}
+
+#sideNavHeader {
+    @include breakpoint-only(mobile) {
+        border-right: solid 1px black;
+    }
+
+    @include breakpoint-only(non-mobile) {
+        grid-column: 1 / 2;
+        grid-row: 1 / 3;
+        border-right: solid white 1px;
+    }
+
+    border-bottom: $theme-app-chrome-border;
+    padding-right: 5px;
+    height: 40px;
+    display: none;
+    align-items: center;
+    font-size: 20px;
+}
+
+Nav.HomeNav {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+
+    A {
+        display: flex;
+        color: white;
+        background-color: $solarized-blue;
+        font-size: 30px;
+        align-items: center;
+        justify-content: center;
+        margin: 5px;
+        cursor: pointer;
+    }
+}
+
+.GakuGymMark {
+    @include theme-app-chrome-text-primary-font();
+}
+
+.BreadCrumbNav {
+    @include breakpoint-only(non-mobile) {
+        display: none;
+    }
+}

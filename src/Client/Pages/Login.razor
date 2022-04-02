@@ -1,0 +1,32 @@
+﻿@page "/login"
+@layout BlankLayout
+@inherits BaseComponent
+
+<img src="/GakuGym.svg" style="color:red;">
+<div class="inputWrapper">
+    <label>Password</label>
+    <input @bind="password"/>
+</div>
+<button @onclick="OnLoginClick">Login</button>
+<div>@authFailureMessage</div>
+@code 
+{
+    string? password;
+    string? authFailureMessage;
+
+    async Task OnLoginClick()
+    {
+        var authResult = await API.Authenticate(password!);
+
+        if(authResult.success)
+        {
+            Security.SetAuthToken(authResult.jwtToken);
+
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            authFailureMessage = "Login failed. Please confirm your password and try again.";
+        }
+    }
+}

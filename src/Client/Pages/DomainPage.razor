@@ -1,0 +1,62 @@
+﻿@page "/fact-database/domain/{RouteParamDomainId:guid}"
+@inherits BaseComponent
+
+@if (domain != null)
+{
+	<div id="pageHeader">
+	    <span id="pageHeaderLeft">Domain - @domain.name</span>
+		<span id="pageHeaderRight">
+			<button class="SecondaryButton" @onclick="OnEditClick"><svg class="icon"><use xlink:href="#edit"/></svg></button><!--
+		 --><button class="SecondaryButton" @onclick="OnBackClick"><svg class="icon"><use xlink:href="#back"/></svg></button>
+		</span>
+	</div>
+	<div id="pageBody">
+		<div id="domainDescription">
+			@domain.description	
+		</div>
+		<div class="listHeader">
+			<span>Categories</span>
+			<button class="SecondaryButton" @onclick="AddCategoryClick"><svg class="icon"><use xlink:href="#add"/></svg></button>
+		</div>
+		@foreach (var category in domain.categories)
+		{
+			<div class="card categoryCard" @onclick="() => OnCategoryClick(category)">
+				<div>@category.name</div>
+				<div>@category.description</div>
+			</div>
+		}
+	</div>
+}
+
+@code 
+{
+	[Parameter]
+	public Guid RouteParamDomainId { get; set; }
+
+	Domain? domain;
+
+	protected override async Task OnParametersSetAsync()
+	{
+		domain = await API.GetDomain(RouteParamDomainId);		
+	}
+
+	void OnEditClick()
+	{
+		NavigationManager.NavigateTo($"/fact-database/domain/{domain.guid}/edit");
+	}
+
+	void OnBackClick()
+	{
+		NavigationManager.NavigateTo("/fact-database");
+	}
+
+	void AddCategoryClick()
+	{
+		NavigationManager.NavigateTo($"/fact-database/domain/{domain.guid}/add-category");
+	}
+
+	void OnCategoryClick(Category category)
+	{
+		NavigationManager.NavigateTo($"/fact-database/category/{category.guid}");
+	}
+}

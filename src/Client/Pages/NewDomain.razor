@@ -1,0 +1,52 @@
+﻿@page "/fact-database/new-domain"
+@inherits BaseComponent
+@using System.ComponentModel.DataAnnotations
+
+<div id="pageHeader">
+    <span id="pageHeaderLeft">New Domain</span>
+    <span id="pageHeaderRight"><button class="SecondaryButton" @onclick="OnCloseClick"><svg class="icon"><use xlink:href="#close"/></svg></button></span>
+</div>
+<div id="pageBody">
+	<EditForm OnSubmit="OnCreateClick" EditContext="editContext">
+		<DataAnnotationsValidator/>
+		<div class="inputWrapper">
+			<label>Name</label>
+			<InputText @bind-Value="this.nameText" placeholder="Name of the domain"/>
+			<ValidationMessage For="() => this.nameText"/>
+		</div>
+		<div class="inputWrapper">
+			<label>Description</label>
+			<InputText @bind-Value="this.descriptionText" placeholder="A description (optional)"/>
+		</div>
+		<button type="submit">Create</button>
+	</EditForm>
+</div>
+
+@code 
+{
+	EditContext editContext { get; set; }
+
+	[Required]
+	public string? nameText { get; set; }
+	string? descriptionText;
+
+	void OnCloseClick()
+	{
+		NavigationManager.NavigateTo("/fact-database");
+	}
+
+	protected override void OnInitialized()
+	{
+		editContext = new EditContext(this);
+	}
+
+	async Task OnCreateClick()
+	{
+		if(editContext.Validate())
+		{
+			await API.CreateDomain(nameText, descriptionText);
+
+			NavigationManager.NavigateTo("/fact-database");			
+		}
+	}
+}

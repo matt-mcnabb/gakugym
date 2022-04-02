@@ -1,0 +1,50 @@
+﻿@page "/fact-database/category/{RouteParamCategoryId:guid}/add-challenge"
+@inherits BaseComponent
+
+<div id="pageHeader">
+	<span id="pageHeaderLeft">New Challenge</span>
+	<span id="pageHeaderRight"><button class="SecondaryButton" @onclick="OnCloseClick"><svg class="icon"><use xlink:href="#close"/></svg></button></span>
+</div>
+<div id="pageBody">
+    <div class="inputWrapper">
+    <label>Name</label>
+    <input type="text" @bind-value="nameText"></input>
+    </div>
+    <div class="inputWrapper">
+    <label>Front Template</label>
+    <textarea @bind="frontTemplateText"></textarea>
+    </div>
+    <div class="inputWrapper">
+    <label>Back Template</label>
+    <textarea @bind="backTemplateText"></textarea>
+    </div>
+    <button @onclick="OnAddChallengeClick">Add Challenge</button>
+</div>
+
+@code 
+{
+	[Parameter]
+	public Guid RouteParamCategoryId { get; set; }
+
+    string? nameText;
+    string? frontTemplateText;
+    string? backTemplateText;
+
+    void OnCloseClick()
+    {
+        NavigationManager.NavigateTo($"/fact-database/category/{RouteParamCategoryId}");
+    }
+
+    async Task OnAddChallengeClick()
+    {
+        await API.SaveChallenge(new Challenge
+        {
+            name          = nameText,
+            frontTemplate = frontTemplateText,
+            backTemplate  = backTemplateText,
+            categoryId    = RouteParamCategoryId
+        });
+
+        NavigationManager.NavigateTo($"/fact-database/category/{RouteParamCategoryId}");
+    }
+}

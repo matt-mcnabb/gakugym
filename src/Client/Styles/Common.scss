@@ -1,0 +1,17 @@
+﻿@mixin breakpoint-only($target)
+{
+    @if $target == mobile 
+    {  
+        @media screen and (max-width: 575.98px) 
+        {
+            @content;
+        }
+    }
+    @else if $target == non-mobile
+    {
+        @media screen and (min-width: 576px) 
+        {
+            @content;
+        }
+    }
+}

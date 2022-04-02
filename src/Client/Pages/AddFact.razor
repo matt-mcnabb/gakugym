@@ -1,0 +1,62 @@
+﻿@page "/fact-database/category/{RouteCategoryId:guid}/add-fact"
+@inherits BaseComponent
+
+@if(category != null && fieldValues != null)
+{
+	<div id="pageHeader">
+	    <span id="pageHeaderLeft">@category.name - New Fact</span>
+		<span id="pageHeaderRight">
+			<button class="SecondaryButton" @onclick="OnCloseClick"><svg class="icon"><use xlink:href="#close"/></svg></button>
+		</span>
+	</div>
+	<div id="pageBody">
+
+		@foreach(var field in fieldValues)
+		{
+			<div class="inputWrapper">
+				<label>@field.fieldName</label>
+				<input type="text" @bind-value="@field.value">
+			</div>
+		}
+		<div>
+			<button @onclick="OnAddFactClick">Create Fact</button>
+		</div>
+	</div>
+}
+
+@code 
+{
+	[Parameter]
+	public Guid RouteCategoryId { get; set; }
+
+	Category? category;
+
+	class FactFieldModel
+	{
+		public Guid    guid;
+		public string? fieldName;
+		public string? value;
+	}
+
+	List<FactFieldModel>? fieldValues;
+
+	protected override async Task OnParametersSetAsync()
+	{
+		category = await API.GetCategory(RouteCategoryId);
+
+		fieldValues = category.fields.Select(x => new FactFieldModel { guid = x.guid, fieldName = x.name, value = "" }).ToList();		
+	}
+
+	void OnCloseClick()
+	{
+		NavigationManager.NavigateTo($"/fact-database/category/{RouteCategoryId}");		
+	}
+
+	async Task OnAddFactClick()
+	{
+		await API.AddFact(category.guid, fieldValues.ToDictionary(x => x.guid, x => x.value));
+
+		NavigationManager.NavigateTo($"/fact-database/category/{category.guid}");
+	}
+
+}

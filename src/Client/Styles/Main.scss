@@ -1,0 +1,12 @@
+﻿@use "sass:color";
+
+@import "Reset.scss";
+@import "Common.scss";
+@import "Colors.scss";
+@import "Theme.scss";
+@import "Components.scss";
+@import "Layout.scss";
+
+@import "Pages/Home.scss";
+@import "Pages/FactDatabase.scss";
+@import "Pages/StudySession.scss";
