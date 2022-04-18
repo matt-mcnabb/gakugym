@@ -368,10 +368,10 @@ internal static class DAL
             ($@"
                 insert into FactChallengeData (guid, factId, categoryId, status)
                     select
-                        {factChallengeData.guid.Value}',
-                        {factChallengeData.factId}',
-                        {factChallengeData.challengeId}',
-                        {factChallengeData.status}'
+                        {factChallengeData.guid.Value},
+                        {factChallengeData.factId},
+                        {factChallengeData.challengeId},
+                        {factChallengeData.status}
             "));
         }
         else
@@ -379,9 +379,9 @@ internal static class DAL
             await DB.ExecNonQuery(new SafeSQL
             ($@"
                 update FactChallengeData set
-                    status = {factChallengeData.status}'
+                    status = {factChallengeData.status}
                 where
-                    guid = {factChallengeData.guid.Value}'
+                    guid = {factChallengeData.guid.Value}
             "));
         }
 
@@ -398,8 +398,8 @@ internal static class DAL
             ($@"
                 insert into Study (guid, studyData)
                     select 
-                        {study.id.Value}',
-                        {JSON.Serialize(study)}'
+                        {study.id.Value},
+                        {JSON.Serialize(study)}
             "));
         }
         else
@@ -409,7 +409,7 @@ internal static class DAL
                 update Study set
                     studyData = {JSON.Serialize(study)}
                 where
-                    guid = {study.id.Value}'
+                    guid = {study.id.Value}
             "));
         }
 
