@@ -2,7 +2,7 @@
 
 using GakuGym.Common;
 
-public partial class GakuGymClient : IGakuGymAPI
+internal partial class GakuGymClient : IGakuGymAPI
 {
     public async System.Threading.Tasks.Task<GakuGym.Common.Domain> CreateDomain(string name, string description)
     {

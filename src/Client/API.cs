@@ -3,9 +3,16 @@
 using GakuGym.Common;
 using Microsoft.AspNetCore.Components;
 
-public partial class GakuGymClient : IGakuGymAPI
+internal partial class GakuGymClient : IGakuGymAPI
 {
-    [Inject] private HttpClient HttpClient { get; set; } = default!;
+    private readonly HttpClient httpClient;
+    private readonly ISecurity Security;
+
+    public GakuGymClient(HttpClient httpClient, ISecurity security)
+    {
+        this.httpClient = httpClient;
+        this.Security = security;
+    }
 
     private async Task<HttpResponseMessage> PostContent(string uri, string? content = null)
     {
@@ -16,7 +23,7 @@ public partial class GakuGymClient : IGakuGymAPI
         if (!String.IsNullOrEmpty(Security.AuthToken))
             httpRequest.Headers.Add("Authorization", Security.AuthToken);
 
-        return await HttpClient.SendAsync(httpRequest);
+        return await httpClient.SendAsync(httpRequest);
     }
 
     private async Task<TResponse?> PostRequest<TResponse>(string uri)

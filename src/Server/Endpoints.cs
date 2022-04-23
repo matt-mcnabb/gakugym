@@ -2,7 +2,14 @@
 
 using GakuGym.Common;
 
-public static partial class Endpoints
+internal partial class Endpoints
 {
-    static IGakuGymAPI gakuGymAPI = new GakuGymAPI();
+    private readonly IGakuGymAPI GakuGymAPI;
+    private readonly Security    Security;
+
+    public Endpoints(IGakuGymAPI gakuGymAPI, Security security)
+    {
+        GakuGymAPI = gakuGymAPI;
+        Security   = security;    
+    }
 }

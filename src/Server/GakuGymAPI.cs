@@ -2,8 +2,15 @@
 
 using GakuGym.Common;
 
-public class GakuGymAPI : IGakuGymAPI
+internal class GakuGymAPI : IGakuGymAPI
 {
+    private readonly Security Security;
+
+    public GakuGymAPI(Security security)
+    {
+        Security = security;
+    }
+
     public async Task<Domain> CreateDomain(string name, string description) { return await DAL.CreateDomain(name, description); }
 
     public async Task UpdateDomain(Domain domain) { await DAL.UpdateDomain(domain); }

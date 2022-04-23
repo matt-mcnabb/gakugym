@@ -46,9 +46,9 @@ public class EndpointGenerator : IIncrementalGenerator
 
 using GakuGym.Common;
 
-public static partial class Endpoints
+internal partial class Endpoints
 {
-    public static void MapEndpoints(IEndpointRouteBuilder routeBuilder)
+    public void MapEndpoints(IEndpointRouteBuilder routeBuilder)
     {"
         );
 
@@ -66,7 +66,7 @@ $@"
                 sb.Append
                 (
 $@"
-            if(!Security.VerifyToken(context.Request.Headers[""Authorization""]))
+            if(!Security.AuthorizeRequest(context))
             {{
                 context.Response.StatusCode = 401;
                 return;
@@ -100,7 +100,7 @@ $@"
             if (apiMethod.returnType != null)
                 sb.Append("var result = ");
 
-            sb.Append($"await gakuGymAPI.{apiMethod.methodName}(");
+            sb.Append($"await GakuGymAPI.{apiMethod.methodName}(");
 
             sb.Append(String.Join(", ", apiMethod.parameters.Select(x => "request." + x.name)));
 

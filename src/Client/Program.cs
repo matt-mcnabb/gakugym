@@ -12,4 +12,10 @@ builder.Services.AddSingleton<HttpClient>(new HttpClient { BaseAddress = new Uri
 builder.Services.AddSingleton<IGakuGymAPI, GakuGymClient>();
 builder.Services.AddScoped<IRouteMatcher, RouteMatcher>();
 
+#if DEBUG_NO_AUTH
+    builder.Services.AddSingleton<ISecurity, NoAuthSecurity>();
+#else
+    builder.Services.AddSingleton<ISecurity, Security>();
+#endif
+
 await builder.Build().RunAsync();

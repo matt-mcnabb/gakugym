@@ -6,41 +6,43 @@ using JWT.Builder;
 
 public class NoAuthAttribute : Attribute { }
 
-public static class Security
+internal class Security
 {
-    private static string? passwordHash;
-    private static string? authTokenSecret;
+    private readonly Settings Settings;
 
-    public static void Initialize()
+    public Security(Settings settings)
     {
-        passwordHash    = Settings.SecurityPasswordHash;
-        authTokenSecret = Settings.SecurityTokenSecret;
+        Settings = settings;
     }
 
-    public static AuthResult Authenticate(string password)
+
+    public AuthResult Authenticate(string password)
     {
-        if(BCrypt.Verify(password, passwordHash))
+        if(BCrypt.Verify(password, Settings.SecurityPasswordHash))
             return new AuthResult { success = true, jwtToken = CreateAuthToken() };
         else
             return new AuthResult { success = false };
     }
 
-    private static string CreateAuthToken()
+    private string CreateAuthToken()
     {
         return JwtBuilder.Create()
                          .WithAlgorithm(new JWT.Algorithms.HMACSHA512Algorithm())
-                         .WithSecret(authTokenSecret)
+                         .WithSecret(Settings.SecurityTokenSecret)
                          .AddClaim("exp", DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds())
                          .Encode();
     }
 
-    public static bool VerifyToken(string token)
+    public virtual bool AuthorizeRequest(HttpContext httpContext) 
+        => VerifyToken(httpContext.Request.Headers["Authorization"]);
+
+    private bool VerifyToken(string token)
     {
         try
         {
             JwtBuilder.Create()
                       .WithAlgorithm(new JWT.Algorithms.HMACSHA512Algorithm())
-                      .WithSecret(authTokenSecret)
+                      .WithSecret(Settings.SecurityTokenSecret)
                       .MustVerifySignature()
                       .Decode(token);
         }
@@ -51,4 +53,12 @@ public static class Security
 
         return true;
     }
+}
+
+
+internal class NoAuthSecurity : Security
+{
+    public NoAuthSecurity(Settings settings) : base(settings) { }
+
+    public override bool AuthorizeRequest(HttpContext httpContext) => true;
 }

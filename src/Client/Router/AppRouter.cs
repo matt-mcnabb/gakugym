@@ -8,6 +8,7 @@ public class AppRouter : IComponent, IHandleAfterRender, IDisposable
     [Inject] private NavigationManager       NavigationManager      { get; set; } = default!;
     [Inject] private INavigationInterception NavigationInterception { get; set; } = default!;
     [Inject] private IRouteMatcher           RouteMatcher           { get; set; } = default!;
+    [Inject] private ISecurity               Security               { get; set; } = default!;
 
     [Parameter] public RenderFragment<RouteData>? Found    { get; set; }
     [Parameter] public RenderFragment?            NotFound { get; set; }

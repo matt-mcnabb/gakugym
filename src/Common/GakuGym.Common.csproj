@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
+    <Configurations>Debug;Release;Debug (no auth);Debug No Auth</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

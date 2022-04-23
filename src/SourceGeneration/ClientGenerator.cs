@@ -53,7 +53,7 @@ public class ClientGenerator : IIncrementalGenerator
 
 using GakuGym.Common;
 
-public partial class GakuGymClient : IGakuGymAPI
+internal partial class GakuGymClient : IGakuGymAPI
 {"
         );
 
