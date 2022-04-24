@@ -8,8 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddSingleton<Settings>();
-#if NO_AUTH
-    builder.Services.AddSingleton<NoAuthSecurity>();
+#if DEBUG_NO_AUTH
+    builder.Services.AddSingleton<Security, NoAuthSecurity>();
 #else
     builder.Services.AddSingleton<Security>();
 #endif
