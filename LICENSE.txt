@@ -1,8 +1,15 @@
+Gaku Gym is licensed under the "Gaku Gym LICENSE" specified below. Third party
+software packages and assets included with Gaku Gym are included and used 
+according to their own licenses which are specified in the 'licenses' folder of 
+this repository.
+
+--------------------------------------------------------------------------------
+
 Copyright (c) 2022, Matthew Scott McNabb - ALL RIGHTS RESERVED
 
 --------------------------------------------------------------------------------
 
-Gaku Gym LICENSE (Version 1.0, Last Updated: April 2nd, 2022)
+Gaku Gym LICENSE (Version 1.1, Last Updated: May 7th, 2022)
 
 Permission is granted to copy, compile, and execute the software for personal, 
 non-commercial use. The distribution, modification, or creation of derivative 

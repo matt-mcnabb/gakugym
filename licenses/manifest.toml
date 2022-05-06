@@ -12,6 +12,7 @@ author      = "M. Alsup"
 licenseType = "MIT"
 license     = "jQuery blockUI plugin/LICENSE-INFO.txt"
 usage       = "/src/Client/wwwroot/scripts/ext/jquery.blockUI.js"
+notes       = "The license language is specified via reference in the copyright notice in the comment headers of the source."
 
 [jQuery]
 source      = "https://code.jquery.com/jquery-3.6.0.min.js"
@@ -20,4 +21,4 @@ author      = "OpenJS Foundation and jQuery contributors"
 licenseType = "MIT"
 license     = "jQuery/LICENSE-INFO.txt"
 usage       = "/src/Client/wwwroot/scripts/ext/jquery-3.6.0.min.js"
-
+notes       = "The license language is specified via reference in the copyright notice in the comment headers of the source."
