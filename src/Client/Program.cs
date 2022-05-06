@@ -11,6 +11,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddSingleton<HttpClient>(new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddSingleton<IGakuGymAPI, GakuGymClient>();
 builder.Services.AddScoped<IRouteMatcher, RouteMatcher>();
+builder.Services.AddSingleton<BlockUI>();
 
 #if DEBUG_NO_AUTH
     builder.Services.AddSingleton<ISecurity, NoAuthSecurity>();

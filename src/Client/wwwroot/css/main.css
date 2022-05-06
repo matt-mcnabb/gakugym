@@ -149,7 +149,7 @@ button.SecondaryButton {
   border-color: transparent;
 }
 button.SecondaryButton .icon {
-  fill: black;
+  color: black;
 }
 button.SecondaryButton:hover {
   border: solid 1px #ccc;
@@ -225,6 +225,35 @@ tr:last-child td:last-child {
 
 table {
   border-collapse: separate;
+}
+
+.Notifier {
+  z-index: 1;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+
+.Notification, .InfoNotification, .ErrorNotification {
+  border-radius: 3px;
+  margin: 5px;
+  padding: 5px;
+  color: white;
+}
+.Notification .icon, .InfoNotification .icon, .ErrorNotification .icon {
+  color: white;
+  float: right;
+  position: relative;
+  top: -5px;
+  left: 5px;
+}
+
+.ErrorNotification {
+  background-color: #f66;
+}
+
+.InfoNotification {
+  background-color: #66f;
 }
 
 body {
@@ -334,9 +363,6 @@ Nav.SideNav a:hover {
   flex-direction: column;
 }
 
-/*.treeNode
-{
-}*/
 .treeNodeContent {
   display: flex;
   align-items: center;
@@ -379,7 +405,7 @@ Nav.HomeNav A {
   cursor: pointer;
 }
 
-.StudyGymMark {
+.GakuGymMark {
   font-family: Tahoma;
   font-weight: bold;
   color: #222222;

@@ -11,7 +11,12 @@ internal class GakuGymAPI : IGakuGymAPI
         Security = security;
     }
 
-    public async Task<Domain> CreateDomain(string name, string description) { return await DAL.CreateDomain(name, description); }
+    public async Task<Domain> CreateDomain(string name, string description) 
+    {
+        if (String.IsNullOrWhiteSpace(name)) throw new ArgumentException($"{nameof(name)} cannot be empty.");
+
+        return await DAL.CreateDomain(name.Trim(), description); 
+    }
 
     public async Task UpdateDomain(Domain domain) { await DAL.UpdateDomain(domain); }
 

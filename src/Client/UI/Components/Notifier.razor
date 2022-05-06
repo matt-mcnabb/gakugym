@@ -1,0 +1,33 @@
+﻿@namespace GakuGym.Client
+
+<div class="Notifier">
+    @foreach(var notification in Notifications.All)
+    {
+        <div class="@(notification.type switch
+        {
+            NotificationType.Info  => "InfoNotification",
+            NotificationType.Error => "ErrorNotification",
+            _ => ""
+        })"><svg class="icon" @onclick="@(() => CloseNotification(notification))"><use xlink:href="#close"/></svg>
+            @notification.message            
+        </div>        
+    }
+</div>
+
+@code 
+{
+    protected override void OnInitialized()
+    {
+        Notifications.OnNotificationsChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        Notifications.OnNotificationsChange -= StateHasChanged;    
+    }
+
+    void CloseNotification(Notification notification)
+    {
+        Notifications.Close(notification);
+    }
+}

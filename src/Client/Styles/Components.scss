@@ -163,7 +163,7 @@ button.SecondaryButton
     .icon {
         //width: 20px;
         //height: 20px;
-        fill: black;
+        color: black;
     }
 
     &:hover {
@@ -264,3 +264,40 @@ table
 {
     border-collapse: separate;
 }
+
+.Notifier
+{
+    z-index: 1;
+    position: absolute;
+    right:0;
+    bottom:0;
+}
+
+.Notification
+{
+    border-radius: 3px;
+    margin: 5px;
+    padding: 5px;
+    color:white;
+    .icon
+    {
+        color: white;
+        float:right;
+        position: relative;
+        top:-5px;
+        left:5px;
+    }    
+}
+
+.ErrorNotification
+{
+    @extend .Notification;
+    background-color: #f66;
+}
+
+.InfoNotification
+{
+    @extend .Notification;
+    background-color: #66f;
+}
+

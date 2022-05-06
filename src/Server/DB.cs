@@ -20,7 +20,7 @@ public ref struct SqlInterpolatedStringHandler
             Guid guid                     => $"X'{BitConverter.ToString(guid.ToByteArray()).Replace("-", "")}'",
             DateTimeOffset dateTimeOffset => $"'{dateTimeOffset.ToISO8601()}'",
             string s                      => $"'{s.Replace("'","''")}'",
-            _                             => value?.ToString()
+            _                             => value?.ToString() ?? "null"
         });
 
     public string ToFormattedString() =>
